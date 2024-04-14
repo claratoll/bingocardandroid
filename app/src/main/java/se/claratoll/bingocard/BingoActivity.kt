@@ -22,6 +22,8 @@ class BingoActivity : AppCompatActivity() {
     private val doubleClickTimeout: Long = 300
     private lateinit var mySharedPreferences: MySharedPreferences
 
+    private lateinit var currentYear: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -31,6 +33,8 @@ class BingoActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        currentYear = intent.getStringExtra("selectedYear").toString()
 
         mySharedPreferences = MySharedPreferences(this)
 
@@ -52,7 +56,7 @@ class BingoActivity : AppCompatActivity() {
         )
         for (textViewId in allTextViewIds) {
             val textView = findViewById<TextView>(textViewId)
-            textView.text = mySharedPreferences.getText(textViewId.toString(), "2024")
+            textView.text = mySharedPreferences.getText(textViewId.toString(), currentYear)
             textView.setOnTouchListener { _, event ->
                 if (event.action == MotionEvent.ACTION_UP) {
                     lastClickedTextView = textView
@@ -96,5 +100,9 @@ class MySharedPreferences(context: Context) {
     // Metod för att hämta texten från en TextView
     fun getText(key: String, default: String): String {
         return sharedPreferences.getString(key, default) ?: default
+    }
+
+    fun getAllYears(): Set<String> {
+        return sharedPreferences.all.keys.toSet()
     }
 }
